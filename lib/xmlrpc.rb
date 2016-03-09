@@ -288,4 +288,6 @@
 #
 #
 # You can change the XML-writer by calling method ParserWriterChooseMixin#set_writer.
-module XMLRPC; end
+module XMLRPC
+  VERSION = "0.1.0"
+end
