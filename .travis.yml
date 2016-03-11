@@ -1,4 +1,4 @@
 language: ruby
 rvm:
-  - head
+  - ruby-head
 before_install: gem install bundler -v 1.11.2
