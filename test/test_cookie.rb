@@ -1,5 +1,5 @@
 # frozen_string_literal: false
-require 'test/unit'
+require 'test_helper'
 require 'time'
 require 'webrick'
 require_relative 'webrick_testing'
