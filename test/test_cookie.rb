@@ -68,7 +68,7 @@ class TestCookie < Test::Unit::TestCase
   end
 
   def setup_http_server_option
-    option = {:Port => 0}
+    {:Port => 0}
   end
 
   def test_cookie
