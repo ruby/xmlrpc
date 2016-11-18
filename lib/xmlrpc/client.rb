@@ -237,7 +237,7 @@ module XMLRPC # :nodoc:
     # Each parameter of +args+ must be of one of the following types,
     # where Hash, Struct and Array can contain any of these listed _types_:
     #
-    # * Fixnum, Bignum
+    # * Integer
     # * TrueClass, FalseClass, +true+, +false+
     # * String, Symbol
     # * Float
@@ -255,7 +255,7 @@ module XMLRPC # :nodoc:
     #
     # The type of the return-value is one of the types shown above.
     #
-    # A Bignum is only allowed when it fits in 32-bit. A XML-RPC
+    # An Integer is only allowed when it fits in 32-bit. A XML-RPC
     # +dateTime.iso8601+ type is always returned as a XMLRPC::DateTime object.
     # Struct is never returned, only a Hash, the same for a Symbol, where as a
     # String is always returned. XMLRPC::Base64 is returned as a String from
