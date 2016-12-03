@@ -24,7 +24,7 @@ class DateTime
   #
   # Raises ArgumentError if the given +value+ is out of range, or in the case
   # of XMLRPC::DateTime#year= if +value+ is not of type Integer.
-  def year= (value)
+  def year=(value)
     raise ArgumentError, "date/time out of range" unless value.is_a? Integer
     @year = value
   end
@@ -32,7 +32,7 @@ class DateTime
   # Set +value+ as the new date/time component.
   #
   # Raises an ArgumentError if the given +value+ isn't between 1 and 12.
-  def month= (value)
+  def month=(value)
     raise ArgumentError, "date/time out of range" unless (1..12).include? value
     @month = value
   end
@@ -40,7 +40,7 @@ class DateTime
   # Set +value+ as the new date/time component.
   #
   # Raises an ArgumentError if the given +value+ isn't between 1 and 31.
-  def day= (value)
+  def day=(value)
     raise ArgumentError, "date/time out of range" unless (1..31).include? value
     @day = value
   end
@@ -48,7 +48,7 @@ class DateTime
   # Set +value+ as the new date/time component.
   #
   # Raises an ArgumentError if the given +value+ isn't between 0 and 24.
-  def hour= (value)
+  def hour=(value)
     raise ArgumentError, "date/time out of range" unless (0..24).include? value
     @hour = value
   end
@@ -56,7 +56,7 @@ class DateTime
   # Set +value+ as the new date/time component.
   #
   # Raises an ArgumentError if the given +value+ isn't between 0 and 59.
-  def min= (value)
+  def min=(value)
     raise ArgumentError, "date/time out of range" unless (0..59).include? value
     @min = value
   end
@@ -64,7 +64,7 @@ class DateTime
   # Set +value+ as the new date/time component.
   #
   # Raises an ArgumentError if the given +value+ isn't between 0 and 59.
-  def sec= (value)
+  def sec=(value)
     raise ArgumentError, "date/time out of range" unless (0..59).include? value
     @sec = value
   end
