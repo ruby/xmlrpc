@@ -61,9 +61,7 @@ module GenericParserTest
   def test_fault
     flag, fault = @p.parseMethodResponse(@fault_doc)
      assert_equal(flag, false)
-     unless fault.is_a? XMLRPC::FaultException
-       assert(false, "must be an instance of class XMLRPC::FaultException")
-     end
+     assert_kind_of(XMLRPC::FaultException, fault, "must be an instance of class XMLRPC::FaultException")
      assert_equal(fault.faultCode, 4)
      assert_equal(fault.faultString, "an error message")
   end
