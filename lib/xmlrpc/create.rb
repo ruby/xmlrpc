@@ -177,14 +177,14 @@ module XMLRPC # :nodoc:
 
         val = case param
         when Integer
-          # XML-RPC's int is 32bit int, and Fixnum also may be beyond 32bit
+          # XML-RPC's int is 32bit int
           if Config::ENABLE_BIGINT
             @writer.tag("i4", param.to_s)
           else
             if param >= -(2**31) and param <= (2**31-1)
               @writer.tag("i4", param.to_s)
             else
-              raise "Bignum is too big! Must be signed 32-bit integer!"
+              raise "Integer is too big! Must be signed 32-bit integer!"
             end
           end
         when TrueClass, FalseClass
