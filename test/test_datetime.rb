@@ -130,10 +130,18 @@ class Test_DateTime < Test::Unit::TestCase
   end
 
   def test_to_time2
-    dt = createDateTime()
-    dt.year = 1969
+    y, m, d, h, mi, s = 1969, 3, 24, 12, 0, 5
+    dt = XMLRPC::DateTime.new(y, m, d, h, mi, s)
+    time = dt.to_time
 
-    assert_nil(dt.to_time)
+    assert_not_nil(time)
+
+    assert_equal(y,  time.year)
+    assert_equal(m,  time.month)
+    assert_equal(d,  time.day)
+    assert_equal(h,  time.hour)
+    assert_equal(mi, time.min)
+    assert_equal(s,  time.sec)
   end
 
   def test_to_date1
