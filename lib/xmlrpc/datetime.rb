@@ -87,16 +87,10 @@ class DateTime
   end
 
   # Return a Time object of the date/time which represents +self+.
-  # If the <code>@year</code> is below 1970, this method returns +nil+,
-  # because Time cannot handle years below 1970.
   #
   # The timezone used is GMT.
   def to_time
-    if @year >= 1970
-      Time.gm(*to_a)
-    else
-      nil
-    end
+    Time.gm(*to_a)
   end
 
   # Return a Date object of the date which represents +self+.
