@@ -289,5 +289,5 @@
 #
 # You can change the XML-writer by calling method ParserWriterChooseMixin#set_writer.
 module XMLRPC
-  VERSION = "0.1.1"
+  VERSION = "0.2.0"
 end
