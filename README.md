@@ -1,5 +1,7 @@
 # XMLRPC
 
+[![Build Status](https://travis-ci.org/ruby/xmlrpc.svg?branch=master)](https://travis-ci.org/ruby/xmlrpc)
+
 ## Overview
 
 XMLRPC is a lightweight protocol that enables remote procedure calls over
