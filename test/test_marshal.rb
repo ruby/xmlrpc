@@ -75,8 +75,8 @@ class Test_Marshal < Test::Unit::TestCase
 
       pers = m.load_response(m.dump_response(person))
 
-      assert( pers.is_a?(Person) )
-      assert( person.name == pers.name )
+      assert_kind_of( Person, pers )
+      assert_equal( person.name, pers.name )
     end
 
     # missing, Date, Time, DateTime
