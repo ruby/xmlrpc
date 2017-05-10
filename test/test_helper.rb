@@ -32,7 +32,7 @@ module Test
           if message
             msg = "#{message}\n#{msg}"
           end
-          raise MiniTest::Assertion, msg
+          raise Test::Unit::AssertionFailedError, msg
         end
         values
       end
