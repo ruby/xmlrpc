@@ -59,19 +59,16 @@ module WEBrick_Testing
       servlet = servlet.call(w) if servlet.respond_to? :call
       w.mount('/RPC2', servlet)
     }
-      client_thread = Thread.new {
-        begin
-          yield addr
-        ensure
-          @__server.shutdown
-        end
-      }
-      server_thread = Thread.new {
-        @__server_thread.join
-        @__server = nil
-        assert_equal([], log)
-      }
-      assert_join_threads([client_thread, server_thread])
+
+    begin
+      yield addr
+    ensure
+      @__server.shutdown
+    end
+
+    @__server_thread.join
+    @__server = nil
+    assert_equal([], log)
   end
 end
 end
