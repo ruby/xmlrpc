@@ -1,5 +1,5 @@
 # frozen_string_literal: false
-require 'test_helper'
+require 'test/unit'
 require "xmlrpc/marshal"
 
 module TestXMLRPC

@@ -1,4 +1,4 @@
-require 'test_helper'
+require 'test/unit'
 require 'xmlrpc'
 
 class XmlrpcTest < Test::Unit::TestCase
