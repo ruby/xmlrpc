@@ -13,6 +13,7 @@ module XMLRPC # :nodoc:
 # You can use XMLRPC::Base64 on the client and server-side as a
 # parameter and/or return-value.
 class Base64
+  include Comparable
 
   # Creates a new XMLRPC::Base64 instance with string +str+ as the
   # internal string. When +state+ is +:dec+ it assumes that the
@@ -40,6 +41,11 @@ class Base64
     Base64.encode(@str)
   end
 
+  # Compare two base64 values, based on decoded string
+  def <=>(other)
+    return nil unless other.is_a?(self.class)
+    decoded <=> other.decoded
+  end
 
   # Decodes string +str+ with base64 and returns that value.
   def Base64.decode(str)
