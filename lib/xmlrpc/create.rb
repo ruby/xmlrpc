@@ -12,7 +12,7 @@ module XMLRPC # :nodoc:
 
   module XMLWriter
 
-    class Abstract
+    module Element
       def ele(name, *children)
         element(name, nil, *children)
       end
@@ -23,7 +23,8 @@ module XMLRPC # :nodoc:
     end
 
 
-    class Simple < Abstract
+    class Simple
+      include Element
 
       def document_to_str(doc)
         doc
@@ -57,7 +58,8 @@ module XMLRPC # :nodoc:
     end # class Simple
 
 
-    class XMLParser < Abstract
+    class XMLParser
+      include Element
 
       def initialize
         require "xmltreebuilder"
