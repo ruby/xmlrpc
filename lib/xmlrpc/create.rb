@@ -221,8 +221,6 @@ module XMLRPC # :nodoc:
           @writer.ele("struct", *h)
 
         when Hash
-          # TODO: can a Hash be empty?
-
           h = param.collect do |key, value|
             @writer.ele("member",
               @writer.tag("name", key.to_s),
@@ -233,7 +231,6 @@ module XMLRPC # :nodoc:
           @writer.ele("struct", *h)
 
         when Array
-          # TODO: can an Array be empty?
           a = param.collect {|v| conv2value(v) }
 
           @writer.ele("array",
