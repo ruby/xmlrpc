@@ -254,6 +254,28 @@ module XMLRPC
       assert_equal expected, resp
     end
 
+    def test_application_xml_content_type
+      fh = read 'blog.xml'
+
+      responses = {
+        '/foo' => [ Fake::Response.new(fh, [['Content-Type', 'application/xml']]) ]
+      }
+
+      client = fake_client(responses).new2 'http://example.org/foo'
+
+      resp = client.call('wp.getUsersBlogs', 'tlo', 'omg')
+
+      expected = [{
+        "isAdmin"  => true,
+        "url"      => "http://tenderlovemaking.com/",
+        "blogid"   => "1",
+        "blogName" => "Tender Lovemaking",
+        "xmlrpc"   => "http://tenderlovemaking.com/xmlrpc.php"
+      }]
+
+      assert_equal expected, resp
+    end
+
     # make a request without content-type header
     def test_bad_content_type
       fh = read 'blog.xml'

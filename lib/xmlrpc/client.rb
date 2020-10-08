@@ -512,11 +512,17 @@ module XMLRPC # :nodoc:
       # assume text/xml on instances where Content-Type header is not set
       ct_expected = resp["Content-Type"] || 'text/xml'
       ct = parse_content_type(ct_expected).first
-      if ct != "text/xml"
+      case ct
+      when "text/xml", "application/xml"
+        # OK
+      else
+        message =
+          "Wrong content-type " +
+          "(received '#{ct}' but expected 'text/xml' or 'application/xml')"
         if ct == "text/html"
-          raise "Wrong content-type (received '#{ct}' but expected 'text/xml'): \n#{data}"
+          raise "#{message}:\n#{data}"
         else
-          raise "Wrong content-type (received '#{ct}' but expected 'text/xml')"
+          raise message
         end
       end
 
