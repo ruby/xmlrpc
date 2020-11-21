@@ -10,6 +10,10 @@
   * Added support for `application/xml` as `Content-Type`.
     [GitHub#24][Reported by Reiermeyer]
 
+  * Added `XMLRPC::Server#port`.
+    [GitHub#17][Reported by Harald Sitter]
+    [GitHub#18][Patch by Herwin Weststrate]
+
 ### Fixes
 
   * Fixed a bug that unexpected exception is raised on no data.
@@ -20,3 +24,5 @@
   * Herwin Weststrate
 
   * Reiermeyer
+
+  * Harald Sitter
