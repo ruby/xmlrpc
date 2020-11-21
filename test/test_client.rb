@@ -299,6 +299,18 @@ module XMLRPC
       assert_equal expected, resp
     end
 
+    def test_no_data
+      responses = {
+        '/foo' => [ Fake::Response.new(nil, [['Content-Type', 'text/xml']]) ]
+      }
+
+      client = fake_client(responses).new2 'http://example.org/foo'
+
+      assert_raise(RuntimeError.new("No data")) do
+        client.call('wp.getUsersBlogs', 'tlo', 'omg')
+      end
+    end
+
     def test_i8_tag
       fh = read('blog.xml').gsub(/string/, 'i8')
 

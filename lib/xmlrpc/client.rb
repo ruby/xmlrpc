@@ -526,8 +526,12 @@ module XMLRPC # :nodoc:
         end
       end
 
+      if data.nil?
+        raise "No data"
+      end
+
       expected = resp["Content-Length"] || "<unknown>"
-      if data.nil? or data.bytesize == 0
+      if data.bytesize == 0
         raise "Wrong size. Was #{data.bytesize}, should be #{expected}"
       end
 
