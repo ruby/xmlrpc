@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.summary       = %q{XMLRPC is a lightweight protocol that enables remote procedure calls over HTTP.}
   spec.description   = %q{XMLRPC is a lightweight protocol that enables remote procedure calls over HTTP.}
   spec.homepage      = "https://github.com/ruby/xmlrpc"
-  spec.license       = "Ruby"
+  spec.licenses      = ["Ruby", "BSD-2-Clause"]
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = "exe"
