@@ -1,0 +1,22 @@
+# News
+
+## 0.3.1
+
+### Improvements
+
+  * Added support for comparing `XMLRPC::Base64`.
+    [GitHub#14][Patch by Herwin Weststrate]
+
+  * Added support for `application/xml` as `Content-Type`.
+    [GitHub#24][Reported by Reiermeyer]
+
+### Fixes
+
+  * Fixed a bug that unexpected exception is raised on no data.
+    [GitHub#25][Patch by Herwin Weststrate]
+
+### Thanks
+
+  * Herwin Weststrate
+
+  * Reiermeyer
