@@ -15,11 +15,13 @@ class TestXMLRPCServer < Test::Unit::TestCase
     s.add_handler('test.add') { |a, b| a + b }
     srv_thread = Thread.new { s.serve }
 
-    c = XMLRPC::Client.new('127.0.0.1', '/', s.port)
-    assert_equal(7, c.call('test.add', 3, 4))
-
-    s.shutdown
-    srv_thread.kill
+    begin
+      c = XMLRPC::Client.new('127.0.0.1', '/', s.port)
+      assert_equal(7, c.call('test.add', 3, 4))
+    ensure
+      s.shutdown
+      srv_thread.kill
+    end
   end
 end
 end
