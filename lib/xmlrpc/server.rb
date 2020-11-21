@@ -594,6 +594,11 @@ class Server < WEBrickServlet
     @server.shutdown
   end
 
+  # Get the port of the server, useful when started with port=0
+  def port
+    @server.config[:Port]
+  end
+
 end
 
 
