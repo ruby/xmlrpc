@@ -6,8 +6,8 @@ require 'xmlrpc'
 Gem::Specification.new do |spec|
   spec.name          = "xmlrpc"
   spec.version       = XMLRPC::VERSION
-  spec.authors       = ["SHIBATA Hiroshi"]
-  spec.email         = ["hsbt@ruby-lang.org"]
+  spec.authors       = ["SHIBATA Hiroshi", "Sutou Kouhei"]
+  spec.email         = ["hsbt@ruby-lang.org", "kou@cozmixng.org"]
 
   spec.summary       = %q{XMLRPC is a lightweight protocol that enables remote procedure calls over HTTP.}
   spec.description   = %q{XMLRPC is a lightweight protocol that enables remote procedure calls over HTTP.}
