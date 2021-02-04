@@ -1,5 +1,16 @@
 # News
 
+## 0.3.2
+
+### Improvements
+
+  * Added support for Ruby 3.0.
+    [GitHub#27][Reported by Herwin Weststrate]
+
+### Thanks
+
+  * Herwin Weststrate
+
 ## 0.3.1
 
 ### Improvements
