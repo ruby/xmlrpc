@@ -17,9 +17,10 @@ jobs:
           - macos
           - windows
         ruby:
-          - 2.5
-          - 2.6
-          - 2.7
+          - "2.5"
+          - "2.6"
+          - "2.7"
+          - "3.0"
           - head
         include:
           - { os: windows , ruby: mingw }
