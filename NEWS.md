@@ -1,5 +1,15 @@
 # News
 
+## 0.3.3
+
+### Fixes
+
+  * Fixed a security vulnerability when `ENABLE_MARSHELLING` is set to true
+    
+### Thanks
+
+  * Hassen DHAHBI 
+
 ## 0.3.2
 
 ### Improvements
