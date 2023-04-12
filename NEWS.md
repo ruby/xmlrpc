@@ -8,7 +8,7 @@
     
 ### Thanks
 
-  * Hassen DHAHBI 
+  * Hassen DHAHBI(plenum) 
 
 ## 0.3.2
 
