@@ -113,18 +113,15 @@ module XMLRPC # :nodoc:
         begin
           mod = Module
           klass.split("::").each {|const| mod = mod.const_get(const.strip)}
-
+          return hash unless mod.included_modules.include?(Marshallable)
           obj = mod.allocate
 
           hash.delete "___class___"
-          if  obj.class.included_modules.include? XMLRPC::Marshallable
+         
 	  hash.each {|key, value|
             obj.instance_variable_set("@#{ key }", value) if key =~ /^([a-zA-Z_]\w*)$/
           }
 	  obj
-	  else
-          hash
-	  end
         rescue
           hash
         end
