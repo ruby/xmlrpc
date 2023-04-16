@@ -114,6 +114,7 @@ module XMLRPC # :nodoc:
           mod = Module
           klass.split("::").each {|const| mod = mod.const_get(const.strip)}
 
+          return hash unless mod.included_modules.include? XMLRPC::Marshallable
           obj = mod.allocate
 
           hash.delete "___class___"
