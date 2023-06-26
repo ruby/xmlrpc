@@ -117,10 +117,10 @@ module XMLRPC # :nodoc:
           obj = mod.allocate
 
           hash.delete "___class___"         
-	        hash.each {|key, value|
+	  hash.each {|key, value|
             obj.instance_variable_set("@#{ key }", value) if key =~ /^([a-zA-Z_]\w*)$/
           }
-	        obj
+	  obj
         rescue
           hash
         end
