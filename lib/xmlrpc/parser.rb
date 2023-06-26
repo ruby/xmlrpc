@@ -116,11 +116,11 @@ module XMLRPC # :nodoc:
           return hash unless mod.included_modules.include?(Marshallable)
           obj = mod.allocate
 
-          hash.delete "___class___"         
-	  hash.each {|key, value|
+          hash.delete "___class___"
+          hash.each {|key, value|
             obj.instance_variable_set("@#{ key }", value) if key =~ /^([a-zA-Z_]\w*)$/
           }
-	  obj
+          obj
         rescue
           hash
         end
