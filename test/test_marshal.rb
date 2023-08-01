@@ -13,6 +13,13 @@ class Test_Marshal < Test::Unit::TestCase
     end
   end
 
+  # for test_load_call_class_not_marshallable
+  class Person2
+    attr_reader :name
+    def initialize(name)
+      @name = name
+    end
+  end
 
   def test1_dump_response
     assert_nothing_raised(NameError) {
@@ -107,5 +114,23 @@ class Test_Marshal < Test::Unit::TestCase
     assert_equal(expect, str)
   end
 
+  # tests for vulnerability of unsafe deserialization when ENABLE_MARSHALLING is set to true
+  def test_load_call_class_marshallable
+    # return of load call should contain an instance of Person 
+    input_xml = %{<?xml version="1.0" ?><methodCall><methodName>myMethod</methodName><params><param><value><struct><member><name>___class___</name><value><string>TestXMLRPC::Test_Marshal::Person</string></value></member><member><name>name</name><value><string>John Doe</string></value></member></struct></value></param></params></methodCall>\n}
+    m =  XMLRPC::Marshal.load_call(input_xml)
+    assert_kind_of( Person, m[1][0] )
+    assert_instance_of( Person, m[1][0] ) 
+  end
+
+  def test_load_call_class_not_marshallable
+    # return of load call should contain hash instance since Person2 does not include XMLRPC::Marshallable
+    hash_exp = Hash.new
+    input_xml = %{<?xml version="1.0" ?><methodCall><methodName>myMethod</methodName><params><param><value><struct><member><name>___class___</name><value><string>TestXMLRPC::Test_Marshal::Person2</string></value></member><member><name>name</name><value><string>John Doe</string></value></member></struct></value></param></params></methodCall>\n}
+    m=  XMLRPC::Marshal.load_call(input_xml)
+    assert_kind_of( Hash, m[1][0] )
+    assert_instance_of( Hash, m[1][0] ) 
+  end
+  
 end
 end
