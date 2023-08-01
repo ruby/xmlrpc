@@ -1,5 +1,20 @@
 # News
 
+## 0.3.3
+
+### Improvements
+
+  * GH-36: Stopped to unmarshal all classes. Classes that include
+    `XMLRPC::Marshallable` are only allowed.
+
+    [Patch by ooooooo-q]
+    [Found by ooooooo-q and plenumlab separately]
+
+### Thanks
+
+  * ooooooo-q
+  * plenumlab
+
 ## 0.3.2
 
 ### Improvements
