@@ -25,7 +25,10 @@ module GenericParserTest
     @datetime_xml = File.read(datafile('datetime_iso8601.xml'))
     @datetime_expected = XMLRPC::DateTime.new(2004, 11, 5, 1, 15, 23)
 
+    @marshallable_xml, @marshallable_expected = load_data('marshallable')
+
     @fault_doc = File.read(datafile('fault.xml'))
+    @marshallable = File.read(datafile('marshallable.xml'))
   end
 
   # test parseMethodResponse --------------------------------------------------
@@ -48,6 +51,10 @@ module GenericParserTest
 
   def test_dateTime
     assert_equal(@datetime_expected, @p.parseMethodResponse(@datetime_xml)[1])
+  end
+
+  def test_marshallable
+    assert_equal(@marshallable_expected, @p.parseMethodResponse(@marshallable))
   end
 
   # test parseMethodCall ------------------------------------------------------
