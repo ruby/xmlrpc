@@ -57,7 +57,6 @@ module GenericParserTest
     assert_equal(@marshallable_expected, @p.parseMethodResponse(@marshallable))
   end
 
-
   # test parseMethodCall ------------------------------------------------------
 
   def test_parseMethodCall
