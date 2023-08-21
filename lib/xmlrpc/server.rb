@@ -64,7 +64,7 @@ class BasicServer
     @parser = nil
 
     add_multicall     if Config.enable_multicall
-    add_introspection if Config::ENABLE_INTROSPECTION
+    add_introspection if Config.enable_introspection
   end
 
   # Adds +aBlock+ to the list of handlers, with +name+ as the name of

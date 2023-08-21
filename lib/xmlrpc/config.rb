@@ -40,7 +40,8 @@ module XMLRPC # :nodoc:
       :ENABLE_NIL_PARSER,
       :ENABLE_BIGINT,
       :ENABLE_MARSHALLING,
-      :ENABLE_MULTICALL
+      :ENABLE_MULTICALL,
+      :ENABLE_INTROSPECTION
     ].each do |option|
       define_singleton_method("#{option.downcase}") do
         const_get(option)
