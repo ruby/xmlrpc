@@ -32,12 +32,10 @@ class Test_Features < Test::Unit::TestCase
       XMLRPC::XMLParser.each_installed_parser do |parser|
         para = nil
 
-        XMLRPC::Config.module_eval {remove_const(:ENABLE_NIL_PARSER)}
-        XMLRPC::Config.const_set(:ENABLE_NIL_PARSER, false)
+        XMLRPC::Config.enable_nil_parser = false
         assert_raise(RuntimeError) { para = parser.parseMethodCall(str) }
 
-        XMLRPC::Config.module_eval {remove_const(:ENABLE_NIL_PARSER)}
-        XMLRPC::Config.const_set(:ENABLE_NIL_PARSER, true)
+        XMLRPC::Config.enable_nil_parser = true
         assert_nothing_raised { para = parser.parseMethodCall(str) }
         assert_equal(para[1], @params)
       end

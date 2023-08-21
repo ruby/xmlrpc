@@ -36,7 +36,8 @@ module XMLRPC # :nodoc:
     [
       :DEFAULT_WRITER,
       :DEFAULT_PARSER,
-      :ENABLE_NIL_CREATE
+      :ENABLE_NIL_CREATE,
+      :ENABLE_NIL_PARSER
     ].each do |option|
       define_singleton_method("#{option.downcase}") do
         const_get(option)
