@@ -63,7 +63,7 @@ class BasicServer
     @create = nil
     @parser = nil
 
-    add_multicall     if Config::ENABLE_MULTICALL
+    add_multicall     if Config.enable_multicall
     add_introspection if Config::ENABLE_INTROSPECTION
   end
 
