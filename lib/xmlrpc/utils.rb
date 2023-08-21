@@ -36,7 +36,7 @@ module XMLRPC # :nodoc:
     #
     # Should be an instance of a class from module XMLRPC::XMLParser.
     #
-    # If this method is not called, then XMLRPC::Config::DEFAULT_PARSER is used.
+    # If this method is not called, then XMLRPC::Config.default_parser is used.
     def set_parser(parser)
       @parser = parser
       self
@@ -55,7 +55,7 @@ module XMLRPC # :nodoc:
     def parser
       # if set_parser was not already called then call it now
       if @parser.nil? then
-        set_parser(Config::DEFAULT_PARSER.new)
+        set_parser(Config.default_parser.new)
       end
       @parser
     end

@@ -34,7 +34,8 @@ module XMLRPC # :nodoc:
     ENABLE_INTROSPECTION = false
 
     [
-      :DEFAULT_WRITER
+      :DEFAULT_WRITER,
+      :DEFAULT_PARSER
     ].each do |option|
       define_singleton_method("#{option.downcase}") do
         const_get(option)
