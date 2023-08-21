@@ -180,7 +180,7 @@ module XMLRPC # :nodoc:
         val = case param
         when Integer
           # XML-RPC's int is 32bit int
-          if Config::ENABLE_BIGINT
+          if Config.enable_bigint
             @writer.tag("i4", param.to_s)
           else
             if param >= -(2**31) and param <= (2**31-1)
