@@ -248,7 +248,7 @@ module XMLRPC # :nodoc:
           @writer.tag("base64", param.encoded)
 
         else
-          if Config::ENABLE_MARSHALLING and param.class.included_modules.include? XMLRPC::Marshallable
+          if Config.enable_marshalling and param.class.included_modules.include? XMLRPC::Marshallable
             # convert Ruby object into Hash
             ret = {"___class___" => param.class.name}
             param.instance_variables.each {|v|
