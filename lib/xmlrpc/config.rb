@@ -33,14 +33,18 @@ module XMLRPC # :nodoc:
     # enable Introspection extension by default
     ENABLE_INTROSPECTION = false
 
-    def self.default_writer
-      DEFAULT_WRITER
-    end
+    [
+      :DEFAULT_WRITER
+    ].each do |option|
+      define_singleton_method("#{option.downcase}") do
+        const_get(option)
+      end
 
-    def self.default_writer=(default_writer)
-      module_eval do
-        remove_const(:DEFAULT_WRITER)
-        const_set(:DEFAULT_WRITER, default_writer)
+      define_singleton_method("#{option.downcase}=") do |value|
+        module_eval do
+          remove_const(option)
+          const_set(option, value)
+        end
       end
     end
   end
