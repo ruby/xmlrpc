@@ -199,7 +199,7 @@ module XMLRPC # :nodoc:
           @writer.tag("string", param)
 
         when NilClass
-          if Config::ENABLE_NIL_CREATE
+          if Config.enable_nil_create
             @writer.ele("nil")
           else
             raise "Wrong type NilClass. Not allowed!"
@@ -256,7 +256,7 @@ module XMLRPC # :nodoc:
               val = param.instance_variable_get(v)
 
               if val.nil?
-                ret[name] = val if Config::ENABLE_NIL_CREATE
+                ret[name] = val if Config.enable_nil_create
               else
                 ret[name] = val
               end
