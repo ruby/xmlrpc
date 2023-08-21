@@ -33,6 +33,16 @@ module XMLRPC # :nodoc:
     # enable Introspection extension by default
     ENABLE_INTROSPECTION = false
 
+    def self.default_writer
+      DEFAULT_WRITER
+    end
+
+    def self.default_writer=(default_writer)
+      module_eval do
+        remove_const(:DEFAULT_WRITER)
+        const_set(:DEFAULT_WRITER, default_writer)
+      end
+    end
   end
 
 end

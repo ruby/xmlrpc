@@ -106,7 +106,7 @@ module XMLRPC # :nodoc:
   class Create
 
     def initialize(xml_writer = nil)
-      @writer = xml_writer || Config::DEFAULT_WRITER.new
+      @writer = xml_writer || Config.default_writer.new
     end
 
 
