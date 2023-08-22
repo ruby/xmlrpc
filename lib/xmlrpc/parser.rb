@@ -107,7 +107,7 @@ module XMLRPC # :nodoc:
     def self.struct(hash)
       # convert to marshalled object
       klass = hash["___class___"]
-      if klass.nil? or Config.enable_marshalling? == false
+      if klass.nil? or not Config.enable_marshalling?
         hash
       else
         begin
