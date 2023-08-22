@@ -180,7 +180,7 @@ module XMLRPC # :nodoc:
         val = case param
         when Integer
           # XML-RPC's int is 32bit int
-          if Config.enable_bigint
+          if Config.enable_bigint?
             @writer.tag("i4", param.to_s)
           else
             if param >= -(2**31) and param <= (2**31-1)
@@ -199,7 +199,7 @@ module XMLRPC # :nodoc:
           @writer.tag("string", param)
 
         when NilClass
-          if Config.enable_nil_create
+          if Config.enable_nil_create?
             @writer.ele("nil")
           else
             raise "Wrong type NilClass. Not allowed!"
@@ -248,7 +248,7 @@ module XMLRPC # :nodoc:
           @writer.tag("base64", param.encoded)
 
         else
-          if Config.enable_marshalling and param.class.included_modules.include? XMLRPC::Marshallable
+          if Config.enable_marshalling? and param.class.included_modules.include? XMLRPC::Marshallable
             # convert Ruby object into Hash
             ret = {"___class___" => param.class.name}
             param.instance_variables.each {|v|
@@ -256,7 +256,7 @@ module XMLRPC # :nodoc:
               val = param.instance_variable_get(v)
 
               if val.nil?
-                ret[name] = val if Config.enable_nil_create
+                ret[name] = val if Config.enable_nil_create?
               else
                 ret[name] = val
               end

@@ -107,7 +107,7 @@ module XMLRPC # :nodoc:
     def self.struct(hash)
       # convert to marshalled object
       klass = hash["___class___"]
-      if klass.nil? or Config.enable_marshalling == false
+      if klass.nil? or Config.enable_marshalling? == false
         hash
       else
         begin
@@ -417,7 +417,7 @@ module XMLRPC # :nodoc:
           when "struct"           then struct(child)
           when "array"            then array(child)
           when "nil"
-            if Config.enable_nil_parser
+            if Config.enable_nil_parser?
               v_nil(child)
             else
               raise "wrong/unknown XML-RPC type 'nil'"
@@ -499,7 +499,7 @@ module XMLRPC # :nodoc:
         when "value"
           @value = nil
         when "nil"
-          raise "wrong/unknown XML-RPC type 'nil'" unless Config.enable_nil_parser
+          raise "wrong/unknown XML-RPC type 'nil'" unless Config.enable_nil_parser?
           @value = :nil
         when "array"
           @val_stack << @values

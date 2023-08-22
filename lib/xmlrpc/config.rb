@@ -43,7 +43,9 @@ module XMLRPC # :nodoc:
       :ENABLE_MULTICALL,
       :ENABLE_INTROSPECTION
     ].each do |option|
-      define_singleton_method("#{option.downcase}") do
+      getter = option.to_s.downcase
+      getter.concat('?') if [true, false].include?(const_get(option))
+      define_singleton_method(getter) do
         const_get(option)
       end
 
