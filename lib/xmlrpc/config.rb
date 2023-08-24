@@ -50,10 +50,8 @@ module XMLRPC # :nodoc:
       end
 
       define_singleton_method("#{option.downcase}=") do |value|
-        module_eval do
-          remove_const(option)
-          const_set(option, value)
-        end
+        remove_const(option)
+        const_set(option, value)
       end
     end
   end
