@@ -15,19 +15,16 @@ class Test_Features < Test::Unit::TestCase
     XMLRPC::XMLWriter.each_installed_writer do |writer|
       c = XMLRPC::Create.new(writer)
 
-      XMLRPC::Config.module_eval {remove_const(:ENABLE_NIL_CREATE)}
-      XMLRPC::Config.const_set(:ENABLE_NIL_CREATE, false)
+      XMLRPC::Config.enable_nil_create = false
       assert_raise(RuntimeError) { c.methodCall("test", *@params) }
 
-      XMLRPC::Config.module_eval {remove_const(:ENABLE_NIL_CREATE)}
-      XMLRPC::Config.const_set(:ENABLE_NIL_CREATE, true)
+      XMLRPC::Config.enable_nil_create = true
       assert_nothing_raised { c.methodCall("test", *@params) }
     end
   end
 
   def test_nil_parse
-    XMLRPC::Config.module_eval {remove_const(:ENABLE_NIL_CREATE)}
-    XMLRPC::Config.const_set(:ENABLE_NIL_CREATE, true)
+    XMLRPC::Config.enable_nil_create = true
 
     XMLRPC::XMLWriter.each_installed_writer do |writer|
       c = XMLRPC::Create.new(writer)
@@ -35,12 +32,10 @@ class Test_Features < Test::Unit::TestCase
       XMLRPC::XMLParser.each_installed_parser do |parser|
         para = nil
 
-        XMLRPC::Config.module_eval {remove_const(:ENABLE_NIL_PARSER)}
-        XMLRPC::Config.const_set(:ENABLE_NIL_PARSER, false)
+        XMLRPC::Config.enable_nil_parser = false
         assert_raise(RuntimeError) { para = parser.parseMethodCall(str) }
 
-        XMLRPC::Config.module_eval {remove_const(:ENABLE_NIL_PARSER)}
-        XMLRPC::Config.const_set(:ENABLE_NIL_PARSER, true)
+        XMLRPC::Config.enable_nil_parser = true
         assert_nothing_raised { para = parser.parseMethodCall(str) }
         assert_equal(para[1], @params)
       end

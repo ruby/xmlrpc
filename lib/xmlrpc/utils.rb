@@ -26,7 +26,7 @@ module XMLRPC # :nodoc:
     #
     # Should be an instance of a class from module XMLRPC::XMLWriter.
     #
-    # If this method is not called, then XMLRPC::Config::DEFAULT_WRITER is used.
+    # If this method is not called, then XMLRPC::Config.default_writer is used.
     def set_writer(writer)
       @create = Create.new(writer)
       self
@@ -36,7 +36,7 @@ module XMLRPC # :nodoc:
     #
     # Should be an instance of a class from module XMLRPC::XMLParser.
     #
-    # If this method is not called, then XMLRPC::Config::DEFAULT_PARSER is used.
+    # If this method is not called, then XMLRPC::Config.default_parser is used.
     def set_parser(parser)
       @parser = parser
       self
@@ -47,7 +47,7 @@ module XMLRPC # :nodoc:
     def create
       # if set_writer was not already called then call it now
       if @create.nil? then
-        set_writer(Config::DEFAULT_WRITER.new)
+        set_writer(Config.default_writer.new)
       end
       @create
     end
@@ -55,7 +55,7 @@ module XMLRPC # :nodoc:
     def parser
       # if set_parser was not already called then call it now
       if @parser.nil? then
-        set_parser(Config::DEFAULT_PARSER.new)
+        set_parser(Config.default_parser.new)
       end
       @parser
     end

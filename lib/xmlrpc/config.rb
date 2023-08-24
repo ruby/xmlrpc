@@ -33,6 +33,27 @@ module XMLRPC # :nodoc:
     # enable Introspection extension by default
     ENABLE_INTROSPECTION = false
 
+    [
+      :DEFAULT_WRITER,
+      :DEFAULT_PARSER,
+      :ENABLE_NIL_CREATE,
+      :ENABLE_NIL_PARSER,
+      :ENABLE_BIGINT,
+      :ENABLE_MARSHALLING,
+      :ENABLE_MULTICALL,
+      :ENABLE_INTROSPECTION
+    ].each do |option|
+      getter = option.to_s.downcase
+      getter.concat('?') if [true, false].include?(const_get(option))
+      define_singleton_method(getter) do
+        const_get(option)
+      end
+
+      define_singleton_method("#{option.downcase}=") do |value|
+        remove_const(option)
+        const_set(option, value)
+      end
+    end
   end
 
 end
