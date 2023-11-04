@@ -147,7 +147,7 @@ module XMLRPC # :nodoc:
       proto  = url.scheme
       user   = url.user
       passwd = url.password
-      host   = url.host
+      host   = url.hostname
       port   = url.port
       path   = url.path.empty? ? nil : url.request_uri
 
