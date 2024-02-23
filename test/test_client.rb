@@ -77,6 +77,22 @@ module XMLRPC
       end
     end
 
+    def test_open_timeout=
+      client = Fake::Client.new 'http://example.org/foo'
+      assert_equal 30, client.http.open_timeout
+
+      client.open_timeout = 10
+      assert_equal 10, client.http.open_timeout
+    end
+
+    def test_read_timeout=
+      client = Fake::Client.new 'http://example.org/foo'
+      assert_equal 30, client.http.read_timeout
+
+      client.read_timeout = 20
+      assert_equal 20, client.http.read_timeout
+    end
+
     def test_new2_host_path_port
       client = Fake::Client.new2 'http://example.org/foo'
       host, path, port, *rest = client.args

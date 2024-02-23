@@ -78,7 +78,9 @@ module XMLRPC # :nodoc:
     #
     # If +use_ssl+ is set to +true+, communication over SSL is enabled.
     #
-    # Parameter +timeout+ is the time to wait for a XML-RPC response, defaults to 30.
+    # Parameter +timeout+ defines the open timeout and read timeout of the
+    # XML-RPC request. You can set them individually using the methods
+    # `open_timeout=` and `read_timeout=`
     def initialize(host=nil, path=nil, port=nil, proxy_host=nil, proxy_port=nil,
                    user=nil, password=nil, use_ssl=nil, timeout=nil)
 
@@ -213,6 +215,14 @@ module XMLRPC # :nodoc:
       @timeout = new_timeout
       @http.read_timeout = @timeout
       @http.open_timeout = @timeout
+    end
+
+    def open_timeout=(new_timeout)
+      @http.open_timeout = new_timeout
+    end
+
+    def read_timeout=(new_timeout)
+      @http.read_timeout = new_timeout
     end
 
     # Changes the user for the Basic Authentication header to +new_user+
