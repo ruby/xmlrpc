@@ -205,7 +205,7 @@ module XMLRPC # :nodoc:
           raise "error"
         end
 
-        if not cmp then
+        if not cmp
           raise "wrong xml-rpc (name)"
         end
 
@@ -217,14 +217,14 @@ module XMLRPC # :nodoc:
         if node.childNodes.to_a.size != 1
           raise "wrong xml-rpc (size)"
         end
-        if name != nil then
+        if name != nil
           nodeMustBe(node.firstChild, name)
         end
       end
 
 
       def assert(b)
-        if not b then
+        if not b
           raise "assert-fail"
         end
       end
@@ -436,7 +436,7 @@ module XMLRPC # :nodoc:
         assert( (1..2).include?( node.childNodes.to_a.size ) )
         name = methodName(node[0])
 
-        if node.childNodes.to_a.size == 2 then
+        if node.childNodes.to_a.size == 2
           pa = params(node[1])
         else # no parameters given
           pa = []

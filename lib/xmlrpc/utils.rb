@@ -46,7 +46,7 @@ module XMLRPC # :nodoc:
 
     def create
       # if set_writer was not already called then call it now
-      if @create.nil? then
+      if @create.nil?
         set_writer(Config.default_writer.new)
       end
       @create
@@ -54,7 +54,7 @@ module XMLRPC # :nodoc:
 
     def parser
       # if set_parser was not already called then call it now
-      if @parser.nil? then
+      if @parser.nil?
         set_parser(Config.default_parser.new)
       end
       @parser
