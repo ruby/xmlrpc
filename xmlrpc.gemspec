@@ -18,5 +18,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
   spec.required_ruby_version = ">= 2.3"
 
+  spec.add_dependency "rexml"
   spec.add_dependency "webrick"
 end
