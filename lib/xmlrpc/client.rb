@@ -44,7 +44,7 @@ module XMLRPC # :nodoc:
   #
   #     server = XMLRPC::Client.new("www.ruby-lang.org", "/RPC2", 80)
   #     ok, param = server.call2("michael.add", 4, 5)
-  #     if ok then
+  #     if ok
   #       puts "4 + 5 = #{param}"
   #     else
   #       puts "Error:"
