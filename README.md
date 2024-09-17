@@ -39,7 +39,7 @@ Try the following code.  It calls a standard demonstration remote procedure.
 require 'xmlrpc/client'
 require 'pp'
 
-server = XMLRPC::Client.new2("http://xmlrpc-c.sourceforge.net/api/sample.php")
+server = XMLRPC::Client.new2("http://localhost:8080/RPC2")
 result = server.call("sample.sumAndDifference", 5, 3)
 pp result
 ```
