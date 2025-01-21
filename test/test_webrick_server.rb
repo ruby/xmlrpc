@@ -6,7 +6,6 @@ require 'webrick'
 require_relative 'webrick_testing'
 require "xmlrpc/server"
 require 'xmlrpc/client'
-require 'logger'
 
 module TestXMLRPC
 class Test_Webrick < Test::Unit::TestCase
