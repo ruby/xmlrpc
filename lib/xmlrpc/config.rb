@@ -15,7 +15,11 @@ module XMLRPC # :nodoc:
     #
     # * XMLParser::REXMLStreamParser
     # * XMLParser::LibXMLStreamParser
-    DEFAULT_PARSER = XMLParser::REXMLStreamParser
+    begin
+      DEFAULT_PARSER = XMLParser::LibXMLStreamParser.new.class
+    rescue LoadError
+      DEFAULT_PARSER = XMLParser::REXMLStreamParser.new.class
+    end
 
     # enable <code><nil/></code> tag
     ENABLE_NIL_CREATE    = false
