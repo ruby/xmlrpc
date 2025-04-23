@@ -1,8 +1,12 @@
 # frozen_string_literal: false
 require 'test/unit'
+require 'xmlrpc/create'
 require 'xmlrpc/datetime'
-require "xmlrpc/parser"
+require 'xmlrpc/parser'
 require 'yaml'
+
+# This must be required after xmlrpc/create and xmlrpc/parser.
+require 'xmlrpc/config'
 
 module GenericParserTest
   def datafile(base)
@@ -84,14 +88,13 @@ XMLRPC::XMLParser.each_installed_parser do |parser|
   klass = parser.class
   name = klass.to_s.split("::").last
 
-  eval %{
-    class Test_#{name} < Test::Unit::TestCase
-      include GenericParserTest
+  test_class = Class.new(Test::Unit::TestCase) do
+    include GenericParserTest
 
-      def setup
-        super
-        @p = #{klass}.new
-      end
+    define_method(:setup_parser) do
+      @p = klass.new
     end
-  }
+    setup :setup_parser
+  end
+  self.class.const_set("Test#{name}", test_class)
 end
