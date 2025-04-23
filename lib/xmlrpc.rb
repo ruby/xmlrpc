@@ -64,7 +64,7 @@
 #     * See https://nokogiri.org
 #
 # * General
-#   * possible to choose between XMLParser module (Expat wrapper) and REXML (pure Ruby) parsers
+#   * possible to choose between REXML (pure Ruby) and LibXML/Nokogiri (compiled) parsers
 #   * Marshalling Ruby objects to Hashes and reconstruct them later from a Hash
 #   * SandStorm component architecture XMLRPC::Client interface
 #
