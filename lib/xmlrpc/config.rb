@@ -15,6 +15,7 @@ module XMLRPC # :nodoc:
     #
     # * XMLParser::REXMLStreamParser
     # * XMLParser::LibXMLStreamParser
+    # * XMLParser::NokogiriStreamParser
     DEFAULT_PARSER = XMLParser::REXMLStreamParser
 
     # enable <code><nil/></code> tag

@@ -624,7 +624,51 @@ module XMLRPC # :nodoc:
       end
     end
 
-    Classes = [REXMLStreamParser, LibXMLStreamParser]
+    class NokogiriStreamParser < AbstractStreamParser
+      def initialize
+        require 'nokogiri'
+        @parser_class = NokogiriStreamListener
+      end
+
+      class NokogiriStreamListener
+        include StreamParserMixin
+
+        def self.handler
+          # We need to construct this on first use, since we cannot be sure Nokogiri is available
+          @handler ||= begin
+            Class.new(Nokogiri::XML::SAX::Document) do
+              def initialize(parent)
+                super()
+                @parent = parent
+              end
+
+              def start_element_namespace(name, attrs = [], prefix = nil, uri = nil, ns = [])
+                @parent.startElement(name, attrs)
+              end
+
+              def end_element_namespace(name, prefix = nil, uri = nil)
+                @parent.endElement(name)
+              end
+
+              def characters(string)
+                @parent.character(string)
+              end
+
+              def cdata_block(string)
+                @parent.character(string)
+              end
+            end
+          end
+        end
+
+        def parse(str)
+          parser = Nokogiri::XML::SAX::Parser.new(self.class.handler.new(self))
+          parser.parse(str)
+        end
+      end
+    end
+
+    Classes = [REXMLStreamParser, LibXMLStreamParser, NokogiriStreamParser]
 
     # yields an instance of each installed parser
     def self.each_installed_parser
