@@ -9,356 +9,354 @@ begin
 rescue LoadError
 end
 
-module XMLRPC
-  class ClientTest < Test::Unit::TestCase
-    include TestHelper
+class ClientTest < Test::Unit::TestCase
+  include TestHelper
 
-    module Fake
-      class HTTP < Net::HTTP
-        class << self
-          def new(*args, &block)
-            Class.method(:new).unbind.bind(self).call(*args, &block)
+  module Fake
+    class HTTP < Net::HTTP
+      class << self
+        def new(*args, &block)
+          Class.method(:new).unbind.bind(self).call(*args, &block)
+        end
+      end
+
+      def initialize responses = {}
+        super("127.0.0.1")
+        @started = false
+        @responses = responses
+      end
+
+      def started?
+        @started
+      end
+
+      def start
+        @started = true
+        if block_given?
+          begin
+            return yield(self)
+          ensure
+            @started = false
           end
         end
+        self
+      end
 
-        def initialize responses = {}
-          super("127.0.0.1")
-          @started = false
-          @responses = responses
-        end
+      def request_post path, request, headers
+        @responses[path].shift
+      end
+    end
 
-        def started?
-          @started
-        end
+    class Client < XMLRPC::Client
+      attr_reader :args, :http
 
-        def start
-          @started = true
-          if block_given?
-            begin
-              return yield(self)
-            ensure
-              @started = false
-            end
+      def initialize(*args)
+        @args = args
+        super
+      end
+
+      private
+      def net_http host, port, proxy_host, proxy_port
+        HTTP.new
+      end
+    end
+
+    class Response
+      def self.new body, fields = [], status = '200'
+        klass = Class.new(Net::HTTPResponse::CODE_TO_OBJ[status]) {
+          def initialize(*args)
+            super
+            @read = true
           end
-          self
+        }
+
+        resp = klass.new '1.1', status, 'OK'
+        resp.body = body
+        fields.each do |k,v|
+          resp.add_field k, v
         end
-
-        def request_post path, request, headers
-          @responses[path].shift
-        end
-      end
-
-      class Client < XMLRPC::Client
-        attr_reader :args, :http
-
-        def initialize(*args)
-          @args = args
-          super
-        end
-
-        private
-        def net_http host, port, proxy_host, proxy_port
-          HTTP.new
-        end
-      end
-
-      class Response
-        def self.new body, fields = [], status = '200'
-          klass = Class.new(Net::HTTPResponse::CODE_TO_OBJ[status]) {
-            def initialize(*args)
-              super
-              @read = true
-            end
-          }
-
-          resp = klass.new '1.1', status, 'OK'
-          resp.body = body
-          fields.each do |k,v|
-            resp.add_field k, v
-          end
-          resp
-        end
+        resp
       end
     end
+  end
 
-    def test_new2_host_path_port
-      client = Fake::Client.new2 'http://example.org/foo'
-      host, path, port, *rest = client.args
+  def test_new2_host_path_port
+    client = Fake::Client.new2 'http://example.org/foo'
+    host, path, port, *rest = client.args
 
-      assert_equal 'example.org', host
-      assert_equal '/foo', path
-      assert_equal 80, port
+    assert_equal 'example.org', host
+    assert_equal '/foo', path
+    assert_equal 80, port
 
-      rest.each { |x| refute x }
+    rest.each { |x| refute x }
+  end
+
+  def test_new2_custom_port
+    client = Fake::Client.new2 'http://example.org:1234/foo'
+    host, path, port, *rest = client.args
+
+    assert_equal 'example.org', host
+    assert_equal '/foo', path
+    assert_equal 1234, port
+
+    rest.each { |x| refute x }
+  end
+
+  def test_new2_ssl
+    client = Fake::Client.new2 'https://example.org/foo'
+    host, path, port, proxy_host, proxy_port, user, password, use_ssl, timeout = client.args
+
+    assert_equal 'example.org', host
+    assert_equal '/foo', path
+    assert_equal 443, port
+    assert use_ssl
+
+    refute proxy_host
+    refute proxy_port
+    refute user
+    refute password
+    refute timeout
+  end if defined?(OpenSSL)
+
+  def test_new2_ssl_custom_port
+    client = Fake::Client.new2 'https://example.org:1234/foo'
+    host, path, port, proxy_host, proxy_port, user, password, use_ssl, timeout = client.args
+
+    assert_equal 'example.org', host
+    assert_equal '/foo', path
+    assert_equal 1234, port
+    assert use_ssl
+
+    refute proxy_host
+    refute proxy_port
+    refute user
+    refute password
+    refute timeout
+  end if defined?(OpenSSL)
+
+  def test_new2_user_password
+    client = Fake::Client.new2 'http://aaron:tenderlove@example.org/foo'
+    host, path, port, proxy_host, proxy_port, user, password, use_ssl, timeout = client.args
+
+    [ host, path, port ].each { |x| assert x }
+    assert_equal 'aaron', user
+    assert_equal 'tenderlove', password
+
+    [ proxy_host, proxy_port, use_ssl, timeout ].each { |x| refute x }
+  end
+
+  def test_new2_proxy_host
+    client = Fake::Client.new2 'http://example.org/foo', 'example.com'
+    host, path, port, proxy_host, proxy_port, user, password, use_ssl, timeout = client.args
+
+    [ host, path, port ].each { |x| assert x }
+
+    assert_equal 'example.com', proxy_host
+
+    [ user, password, proxy_port, use_ssl, timeout ].each { |x| refute x }
+  end
+
+  def test_new2_proxy_port
+    client = Fake::Client.new2 'http://example.org/foo', 'example.com:1234'
+    host, path, port, proxy_host, proxy_port, user, password, use_ssl, timeout = client.args
+
+    [ host, path, port ].each { |x| assert x }
+
+    assert_equal 'example.com', proxy_host
+    assert_equal 1234, proxy_port
+
+    [ user, password, use_ssl, timeout ].each { |x| refute x }
+  end
+
+  def test_new2_no_path
+    client = Fake::Client.new2 'http://example.org'
+    host, path, port, *rest = client.args
+
+    assert_equal 'example.org', host
+    assert_nil path
+    assert port
+
+    rest.each { |x| refute x }
+  end
+
+  def test_new2_slash_path
+    client = Fake::Client.new2 'http://example.org/'
+    host, path, port, *rest = client.args
+
+    assert_equal 'example.org', host
+    assert_equal '/', path
+    assert port
+
+    rest.each { |x| refute x }
+  end
+
+  def test_new2_bad_protocol
+    assert_raise(ArgumentError) do
+      XMLRPC::Client.new2 'ftp://example.org'
     end
+  end
 
-    def test_new2_custom_port
-      client = Fake::Client.new2 'http://example.org:1234/foo'
-      host, path, port, *rest = client.args
-
-      assert_equal 'example.org', host
-      assert_equal '/foo', path
-      assert_equal 1234, port
-
-      rest.each { |x| refute x }
+  def test_new2_bad_uri
+    assert_raise(ArgumentError) do
+      XMLRPC::Client.new2 ':::::'
     end
+  end
 
-    def test_new2_ssl
-      client = Fake::Client.new2 'https://example.org/foo'
-      host, path, port, proxy_host, proxy_port, user, password, use_ssl, timeout = client.args
+  def test_new2_path_with_query
+    client = Fake::Client.new2 'http://example.org/foo?bar=baz'
+    host, path, port, *rest = client.args
 
-      assert_equal 'example.org', host
-      assert_equal '/foo', path
-      assert_equal 443, port
-      assert use_ssl
+    assert_equal 'example.org', host
+    assert_equal '/foo?bar=baz', path
+    assert port
 
-      refute proxy_host
-      refute proxy_port
-      refute user
-      refute password
-      refute timeout
-    end if defined?(OpenSSL)
+    rest.each { |x| refute x }
+  end
 
-    def test_new2_ssl_custom_port
-      client = Fake::Client.new2 'https://example.org:1234/foo'
-      host, path, port, proxy_host, proxy_port, user, password, use_ssl, timeout = client.args
+  def test_request
+    fh = read 'blog.xml'
 
-      assert_equal 'example.org', host
-      assert_equal '/foo', path
-      assert_equal 1234, port
-      assert use_ssl
+    responses = {
+      '/foo' => [ Fake::Response.new(fh, [['Content-Type', 'text/xml']]) ]
+    }
 
-      refute proxy_host
-      refute proxy_port
-      refute user
-      refute password
-      refute timeout
-    end if defined?(OpenSSL)
+    client = fake_client(responses, 'http://example.org/foo')
 
-    def test_new2_user_password
-      client = Fake::Client.new2 'http://aaron:tenderlove@example.org/foo'
-      host, path, port, proxy_host, proxy_port, user, password, use_ssl, timeout = client.args
+    resp = client.call('wp.getUsersBlogs', 'tlo', 'omg')
 
-      [ host, path, port ].each { |x| assert x }
-      assert_equal 'aaron', user
-      assert_equal 'tenderlove', password
+    expected = [{
+      "isAdmin"  => true,
+      "url"      => "http://tenderlovemaking.com/",
+      "blogid"   => "1",
+      "blogName" => "Tender Lovemaking",
+      "xmlrpc"   => "http://tenderlovemaking.com/xmlrpc.php"
+    }]
 
-      [ proxy_host, proxy_port, use_ssl, timeout ].each { |x| refute x }
+    assert_equal expected, resp
+  end
+
+  def test_async_request
+    fh = read 'blog.xml'
+
+    responses = {
+      '/foo' => [ Fake::Response.new(fh, [['Content-Type', 'text/xml']]) ]
+    }
+
+    client = fake_client(responses, 'http://example.org/foo')
+
+    resp = client.call_async('wp.getUsersBlogs', 'tlo', 'omg')
+
+    expected = [{
+      "isAdmin"  => true,
+      "url"      => "http://tenderlovemaking.com/",
+      "blogid"   => "1",
+      "blogName" => "Tender Lovemaking",
+      "xmlrpc"   => "http://tenderlovemaking.com/xmlrpc.php"
+    }]
+
+    assert_equal expected, resp
+  end
+
+  def test_application_xml_content_type
+    fh = read 'blog.xml'
+
+    responses = {
+      '/foo' => [ Fake::Response.new(fh, [['Content-Type', 'application/xml']]) ]
+    }
+
+    client = fake_client(responses, 'http://example.org/foo')
+
+    resp = client.call('wp.getUsersBlogs', 'tlo', 'omg')
+
+    expected = [{
+      "isAdmin"  => true,
+      "url"      => "http://tenderlovemaking.com/",
+      "blogid"   => "1",
+      "blogName" => "Tender Lovemaking",
+      "xmlrpc"   => "http://tenderlovemaking.com/xmlrpc.php"
+    }]
+
+    assert_equal expected, resp
+  end
+
+  # make a request without content-type header
+  def test_bad_content_type
+    fh = read 'blog.xml'
+
+    responses = {
+      '/foo' => [ Fake::Response.new(fh) ]
+    }
+
+    client = fake_client(responses, 'http://example.org/foo')
+
+    resp = client.call('wp.getUsersBlogs', 'tlo', 'omg')
+
+    expected = [{
+      "isAdmin"  => true,
+      "url"      => "http://tenderlovemaking.com/",
+      "blogid"   => "1",
+      "blogName" => "Tender Lovemaking",
+      "xmlrpc"   => "http://tenderlovemaking.com/xmlrpc.php"
+    }]
+
+    assert_equal expected, resp
+  end
+
+  def test_no_data
+    responses = {
+      '/foo' => [ Fake::Response.new(nil, [['Content-Type', 'text/xml']]) ]
+    }
+
+    client = fake_client(responses, 'http://example.org/foo')
+
+    assert_raise(RuntimeError.new("No data")) do
+      client.call('wp.getUsersBlogs', 'tlo', 'omg')
     end
+  end
 
-    def test_new2_proxy_host
-      client = Fake::Client.new2 'http://example.org/foo', 'example.com'
-      host, path, port, proxy_host, proxy_port, user, password, use_ssl, timeout = client.args
+  def test_i8_tag
+    fh = read('blog.xml').gsub(/string/, 'i8')
 
-      [ host, path, port ].each { |x| assert x }
+    responses = {
+      '/foo' => [ Fake::Response.new(fh) ]
+    }
 
-      assert_equal 'example.com', proxy_host
+    client = fake_client(responses, 'http://example.org/foo')
 
-      [ user, password, proxy_port, use_ssl, timeout ].each { |x| refute x }
-    end
+    resp = client.call('wp.getUsersBlogs', 'tlo', 'omg')
 
-    def test_new2_proxy_port
-      client = Fake::Client.new2 'http://example.org/foo', 'example.com:1234'
-      host, path, port, proxy_host, proxy_port, user, password, use_ssl, timeout = client.args
+    assert_equal 1, resp.first['blogid']
+  end
 
-      [ host, path, port ].each { |x| assert x }
+  def test_cookie_simple
+    client = Fake::Client.new2('http://example.org/cookie')
+    assert_nil(client.cookie)
+    client.send(:parse_set_cookies, ["param1=value1", "param2=value2"])
+    assert_equal("param1=value1; param2=value2", client.cookie)
+  end
 
-      assert_equal 'example.com', proxy_host
-      assert_equal 1234, proxy_port
+  def test_cookie_override
+    client = Fake::Client.new2('http://example.org/cookie')
+    client.send(:parse_set_cookies,
+                [
+                  "param1=value1",
+                  "param2=value2",
+                  "param1=value3",
+                ])
+    assert_equal("param2=value2; param1=value3", client.cookie)
+  end
 
-      [ user, password, use_ssl, timeout ].each { |x| refute x }
-    end
+  private
+  def read filename
+    File.read File.expand_path(File.join(__FILE__, '..', 'data', filename))
+  end
 
-    def test_new2_no_path
-      client = Fake::Client.new2 'http://example.org'
-      host, path, port, *rest = client.args
-
-      assert_equal 'example.org', host
-      assert_nil path
-      assert port
-
-      rest.each { |x| refute x }
-    end
-
-    def test_new2_slash_path
-      client = Fake::Client.new2 'http://example.org/'
-      host, path, port, *rest = client.args
-
-      assert_equal 'example.org', host
-      assert_equal '/', path
-      assert port
-
-      rest.each { |x| refute x }
-    end
-
-    def test_new2_bad_protocol
-      assert_raise(ArgumentError) do
-        XMLRPC::Client.new2 'ftp://example.org'
-      end
-    end
-
-    def test_new2_bad_uri
-      assert_raise(ArgumentError) do
-        XMLRPC::Client.new2 ':::::'
-      end
-    end
-
-    def test_new2_path_with_query
-      client = Fake::Client.new2 'http://example.org/foo?bar=baz'
-      host, path, port, *rest = client.args
-
-      assert_equal 'example.org', host
-      assert_equal '/foo?bar=baz', path
-      assert port
-
-      rest.each { |x| refute x }
-    end
-
-    def test_request
-      fh = read 'blog.xml'
-
-      responses = {
-        '/foo' => [ Fake::Response.new(fh, [['Content-Type', 'text/xml']]) ]
-      }
-
-      client = fake_client(responses, 'http://example.org/foo')
-
-      resp = client.call('wp.getUsersBlogs', 'tlo', 'omg')
-
-      expected = [{
-        "isAdmin"  => true,
-        "url"      => "http://tenderlovemaking.com/",
-        "blogid"   => "1",
-        "blogName" => "Tender Lovemaking",
-        "xmlrpc"   => "http://tenderlovemaking.com/xmlrpc.php"
-      }]
-
-      assert_equal expected, resp
-    end
-
-    def test_async_request
-      fh = read 'blog.xml'
-
-      responses = {
-        '/foo' => [ Fake::Response.new(fh, [['Content-Type', 'text/xml']]) ]
-      }
-
-      client = fake_client(responses, 'http://example.org/foo')
-
-      resp = client.call_async('wp.getUsersBlogs', 'tlo', 'omg')
-
-      expected = [{
-        "isAdmin"  => true,
-        "url"      => "http://tenderlovemaking.com/",
-        "blogid"   => "1",
-        "blogName" => "Tender Lovemaking",
-        "xmlrpc"   => "http://tenderlovemaking.com/xmlrpc.php"
-      }]
-
-      assert_equal expected, resp
-    end
-
-    def test_application_xml_content_type
-      fh = read 'blog.xml'
-
-      responses = {
-        '/foo' => [ Fake::Response.new(fh, [['Content-Type', 'application/xml']]) ]
-      }
-
-      client = fake_client(responses, 'http://example.org/foo')
-
-      resp = client.call('wp.getUsersBlogs', 'tlo', 'omg')
-
-      expected = [{
-        "isAdmin"  => true,
-        "url"      => "http://tenderlovemaking.com/",
-        "blogid"   => "1",
-        "blogName" => "Tender Lovemaking",
-        "xmlrpc"   => "http://tenderlovemaking.com/xmlrpc.php"
-      }]
-
-      assert_equal expected, resp
-    end
-
-    # make a request without content-type header
-    def test_bad_content_type
-      fh = read 'blog.xml'
-
-      responses = {
-        '/foo' => [ Fake::Response.new(fh) ]
-      }
-
-      client = fake_client(responses, 'http://example.org/foo')
-
-      resp = client.call('wp.getUsersBlogs', 'tlo', 'omg')
-
-      expected = [{
-        "isAdmin"  => true,
-        "url"      => "http://tenderlovemaking.com/",
-        "blogid"   => "1",
-        "blogName" => "Tender Lovemaking",
-        "xmlrpc"   => "http://tenderlovemaking.com/xmlrpc.php"
-      }]
-
-      assert_equal expected, resp
-    end
-
-    def test_no_data
-      responses = {
-        '/foo' => [ Fake::Response.new(nil, [['Content-Type', 'text/xml']]) ]
-      }
-
-      client = fake_client(responses, 'http://example.org/foo')
-
-      assert_raise(RuntimeError.new("No data")) do
-        client.call('wp.getUsersBlogs', 'tlo', 'omg')
-      end
-    end
-
-    def test_i8_tag
-      fh = read('blog.xml').gsub(/string/, 'i8')
-
-      responses = {
-        '/foo' => [ Fake::Response.new(fh) ]
-      }
-
-      client = fake_client(responses, 'http://example.org/foo')
-
-      resp = client.call('wp.getUsersBlogs', 'tlo', 'omg')
-
-      assert_equal 1, resp.first['blogid']
-    end
-
-    def test_cookie_simple
-      client = Fake::Client.new2('http://example.org/cookie')
-      assert_nil(client.cookie)
-      client.send(:parse_set_cookies, ["param1=value1", "param2=value2"])
-      assert_equal("param1=value1; param2=value2", client.cookie)
-    end
-
-    def test_cookie_override
-      client = Fake::Client.new2('http://example.org/cookie')
-      client.send(:parse_set_cookies,
-                  [
-                    "param1=value1",
-                    "param2=value2",
-                    "param1=value3",
-                  ])
-      assert_equal("param2=value2; param1=value3", client.cookie)
-    end
-
-    private
-    def read filename
-      File.read File.expand_path(File.join(__FILE__, '..', 'data', filename))
-    end
-
-    def fake_client(responses, uri)
-      client_class = Class.new(Fake::Client) {
-        define_method(:net_http) { |*_| Fake::HTTP.new(responses) }
-      }
-      client = client_class.new2(uri)
-      client.set_parser(parser)
-      client
-    end
+  def fake_client(responses, uri)
+    client_class = Class.new(Fake::Client) {
+      define_method(:net_http) { |*_| Fake::HTTP.new(responses) }
+    }
+    client = client_class.new2(uri)
+    client.set_parser(parser)
+    client
   end
 end

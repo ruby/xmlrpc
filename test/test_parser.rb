@@ -4,7 +4,6 @@ require 'xmlrpc/datetime'
 require "xmlrpc/parser"
 require 'yaml'
 
-module TestXMLRPC
 module GenericParserTest
   def datafile(base)
     File.join(File.dirname(__FILE__), "data", base)
@@ -95,5 +94,4 @@ XMLRPC::XMLParser.each_installed_parser do |parser|
       end
     end
   }
-end
 end

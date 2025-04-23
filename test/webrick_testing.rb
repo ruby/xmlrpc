@@ -17,7 +17,6 @@ unless WEBrick::Utils::TimeoutHandler.respond_to? :terminate
   end
 end
 
-module TestXMLRPC
 module WEBrick_Testing
   def teardown
     WEBrick::Utils::TimeoutHandler.terminate
@@ -70,5 +69,4 @@ module WEBrick_Testing
     @__server = nil
     assert_equal([], log)
   end
-end
 end

@@ -6,7 +6,6 @@ require_relative 'webrick_testing'
 require "xmlrpc/server"
 require 'xmlrpc/client'
 
-module TestXMLRPC
 class TestCookie < Test::Unit::TestCase
   include WEBrick_Testing
 
@@ -93,5 +92,4 @@ class TestCookie < Test::Unit::TestCase
     assert(@s.call("test.login", "valid-user", "secret"))
     assert_equal("Hello", @s.call("test.require_authenticate_echo", "Hello"))
   end
-end
 end

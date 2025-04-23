@@ -6,7 +6,6 @@ require 'stringio'
 require 'xmlrpc/client'
 require 'xmlrpc/server'
 
-module TestXMLRPC
 class TestXMLRPCServer < Test::Unit::TestCase
   include TestHelper
 
@@ -35,5 +34,4 @@ class TestXMLRPCServer < Test::Unit::TestCase
       srv_thread.kill
     end
   end
-end
 end

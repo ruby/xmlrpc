@@ -7,7 +7,6 @@ require_relative 'webrick_testing'
 require "xmlrpc/server"
 require 'xmlrpc/client'
 
-module TestXMLRPC
 class Test_Webrick < Test::Unit::TestCase
   include WEBrick_Testing
 
@@ -131,5 +130,4 @@ class Test_Webrick < Test::Unit::TestCase
     # multibyte characters
     assert_equal "あいうえおかきくけこ", @s.call('test.add', "あいうえお", "かきくけこ")
   end
-end
 end
