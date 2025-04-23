@@ -275,8 +275,8 @@
 # XMLRPC::Client Example:
 #
 #   # ...
-#   server = XMLRPC::Client.new( "xmlrpc-c.sourceforge.net", "/api/sample.php")
-#   server.set_parser(XMLRPC::XMLParser::XMLParser.new)
+#   client = XMLRPC::Client.new( "xmlrpc-c.sourceforge.net", "/api/sample.php")
+#   client.set_parser(XMLRPC::XMLParser::XMLParser.new)
 #   # ...
 #
 # XMLRPC::Server Example:
