@@ -59,6 +59,9 @@
 #   * libxml (LibXMLStreamParser)
 #     * Compiled
 #     * See https://rubygems.org/gems/libxml-ruby/
+#   * nokogiri (NokogiriStreamParser)
+#     * Compiled
+#     * See https://nokogiri.org
 #
 # * General
 #   * possible to choose between XMLParser module (Expat wrapper) and REXML (pure Ruby) parsers
