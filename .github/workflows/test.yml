@@ -38,4 +38,9 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true # 'bundle install' and cache gems
-      - run: bundle exec rake
+      - name: Test with REXML
+        run: bundle exec rake
+      - name: Test with libxml
+        env:
+          XMLRPC_PARSER: libxml
+        run: bundle exec rake

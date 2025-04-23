@@ -1,5 +1,7 @@
 # frozen_string_literal: false
-require 'test/unit'
+
+require_relative 'helper'
+
 require 'xmlrpc/client'
 require 'net/http'
 begin
@@ -9,6 +11,8 @@ end
 
 module XMLRPC
   class ClientTest < Test::Unit::TestCase
+    include TestHelper
+
     module Fake
       class HTTP < Net::HTTP
         class << self
@@ -217,7 +221,7 @@ module XMLRPC
         '/foo' => [ Fake::Response.new(fh, [['Content-Type', 'text/xml']]) ]
       }
 
-      client = fake_client(responses).new2 'http://example.org/foo'
+      client = fake_client(responses, 'http://example.org/foo')
 
       resp = client.call('wp.getUsersBlogs', 'tlo', 'omg')
 
@@ -239,7 +243,7 @@ module XMLRPC
         '/foo' => [ Fake::Response.new(fh, [['Content-Type', 'text/xml']]) ]
       }
 
-      client = fake_client(responses).new2 'http://example.org/foo'
+      client = fake_client(responses, 'http://example.org/foo')
 
       resp = client.call_async('wp.getUsersBlogs', 'tlo', 'omg')
 
@@ -261,7 +265,7 @@ module XMLRPC
         '/foo' => [ Fake::Response.new(fh, [['Content-Type', 'application/xml']]) ]
       }
 
-      client = fake_client(responses).new2 'http://example.org/foo'
+      client = fake_client(responses, 'http://example.org/foo')
 
       resp = client.call('wp.getUsersBlogs', 'tlo', 'omg')
 
@@ -284,7 +288,7 @@ module XMLRPC
         '/foo' => [ Fake::Response.new(fh) ]
       }
 
-      client = fake_client(responses).new2 'http://example.org/foo'
+      client = fake_client(responses, 'http://example.org/foo')
 
       resp = client.call('wp.getUsersBlogs', 'tlo', 'omg')
 
@@ -304,7 +308,7 @@ module XMLRPC
         '/foo' => [ Fake::Response.new(nil, [['Content-Type', 'text/xml']]) ]
       }
 
-      client = fake_client(responses).new2 'http://example.org/foo'
+      client = fake_client(responses, 'http://example.org/foo')
 
       assert_raise(RuntimeError.new("No data")) do
         client.call('wp.getUsersBlogs', 'tlo', 'omg')
@@ -318,7 +322,7 @@ module XMLRPC
         '/foo' => [ Fake::Response.new(fh) ]
       }
 
-      client = fake_client(responses).new2 'http://example.org/foo'
+      client = fake_client(responses, 'http://example.org/foo')
 
       resp = client.call('wp.getUsersBlogs', 'tlo', 'omg')
 
@@ -348,10 +352,13 @@ module XMLRPC
       File.read File.expand_path(File.join(__FILE__, '..', 'data', filename))
     end
 
-    def fake_client responses
-      Class.new(Fake::Client) {
+    def fake_client(responses, uri)
+      client_class = Class.new(Fake::Client) {
         define_method(:net_http) { |*_| Fake::HTTP.new(responses) }
       }
+      client = client_class.new2(uri)
+      client.set_parser(parser)
+      client
     end
   end
 end
