@@ -282,8 +282,8 @@
 # XMLRPC::Server Example:
 #
 #   # ...
-#   s = XMLRPC::CGIServer.new
-#   s.set_parser(XMLRPC::XMLParser::XMLParser.new)
+#   server = XMLRPC::CGIServer.new
+#   server.set_parser(XMLRPC::XMLParser::XMLParser.new)
 #   # ...
 #
 #
