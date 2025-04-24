@@ -532,6 +532,49 @@ class ModRubyServer < BasicServer
 end
 
 
+# Implements a XML-RPC application, which works with Rack
+class RackApplication < BasicServer
+
+  # This method processes a XML-RPC method call and sends the answer
+  # back to the client.
+  def call(env)
+    length = env['CONTENT_LENGTH'].to_i
+
+    return http_error(405, "Method Not Allowed") unless env['REQUEST_METHOD'] == "POST"
+    return http_error(400, "Bad Request")        unless parse_content_type(env['CONTENT_TYPE']).first == "text/xml"
+    return http_error(411, "Length Required")    unless length > 0
+
+    req = Rack::Request.new(env)
+    data = req.body.read(length)
+
+    return http_error(400, "Bad Request")        if data.nil? or data.bytesize != length
+
+    [200, { "Content-type" => "text/xml; charset=utf-8" }, [process(data)]]
+  end
+
+
+  private
+
+  def http_error(status, message)
+    err = "#{status} #{message}"
+    msg = <<-"MSGEND"
+      <html>
+        <head>
+          <title>#{err}</title>
+        </head>
+        <body>
+          <h1>#{err}</h1>
+          <p>Unexpected error occurred while processing XML-RPC request!</p>
+        </body>
+      </html>
+    MSGEND
+
+    [status, { "Content-Type" => "text/html" }, [msg]]
+  end
+
+end
+
+
 class WEBrickServlet < BasicServer; end # forward declaration
 
 # Implements a standalone XML-RPC server. The method XMLRPC::Server#serve is
