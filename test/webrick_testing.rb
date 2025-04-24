@@ -1,22 +1,6 @@
 # frozen_string_literal: false
 require 'timeout'
 
-# Backport of WEBrick::Utils::TimeoutHandler.terminate from Ruby 2.4.
-unless WEBrick::Utils::TimeoutHandler.respond_to? :terminate
-  class WEBrick::Utils::TimeoutHandler
-    def self.terminate
-      instance.terminate
-    end
-
-    def terminate
-      TimeoutMutex.synchronize{
-        @timeout_info.clear
-        @watcher&.kill&.join
-      }
-    end
-  end
-end
-
 module WEBrick_Testing
   def teardown
     WEBrick::Utils::TimeoutHandler.terminate
