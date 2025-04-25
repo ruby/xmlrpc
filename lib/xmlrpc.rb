@@ -44,7 +44,6 @@
 # * Server
 #   * Standalone XML-RPC server
 #   * CGI-based (works with FastCGI)
-#   * Apache mod_ruby server
 #   * WEBrick servlet
 #
 # * Client
