@@ -29,6 +29,8 @@ class Test_CGIServer < Test::Unit::TestCase
   end
 
   def test_client_server
+    omit("The CGI file does not work on Windows") if RUBY_PLATFORM =~ /(mswin|mingw)/
+
     # NOTE: I don't enable SSL testing as this hangs
     Tempfile.create("cgi-bin") do |tempfile|
       tempfile.write(cgi_bin_script)
