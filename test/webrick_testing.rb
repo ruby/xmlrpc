@@ -35,12 +35,12 @@ module WEBrick_Testing
     addr
   end
 
-  def with_server(config, servlet)
+  def with_server(config, servlet, *args)
     log = []
     logger = WEBrick::Log.new(log, WEBrick::BasicLog::WARN)
     addr = start_server(logger, config) {|w|
       servlet = servlet.call(w) if servlet.respond_to? :call
-      w.mount('/RPC2', servlet)
+      w.mount('/RPC2', servlet, *args)
     }
 
     begin
