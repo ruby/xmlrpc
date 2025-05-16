@@ -4,47 +4,12 @@
 require 'test/unit'
 require 'webrick'
 require_relative 'webrick_testing'
+require 'tempfile'
 require "xmlrpc/server"
 require 'xmlrpc/client'
 
-class Test_Webrick < Test::Unit::TestCase
+class TestCGIServer < Test::Unit::TestCase
   include WEBrick_Testing
-
-  def create_servlet(server)
-    s = XMLRPC::WEBrickServlet.new
-
-    basic_auth = WEBrick::HTTPAuth::BasicAuth.new(
-      :Realm => 'auth',
-      :UserDB => WEBrick::HTTPAuth::Htpasswd.new(File.expand_path('./htpasswd', File.dirname(__FILE__))),
-      :Logger => server.logger,
-    )
-
-    class << s; self end.send(:define_method, :service) {|req, res|
-      basic_auth.authenticate(req, res)
-      super(req, res)
-    }
-
-    s.add_handler("test.add") do |a, b|
-      a + b
-    end
-
-    s.add_handler("test.div") do |a, b|
-      if b == 0
-        raise XMLRPC::FaultException.new(1, "division by zero")
-      else
-        a / b
-      end
-    end
-
-    s.set_default_handler do |name, *args|
-      raise XMLRPC::FaultException.new(-99, "Method #{name} missing" +
-            " or wrong number of parameters!")
-    end
-
-    s.add_introspection
-
-    return s
-  end
 
   def setup_http_server_option(use_ssl)
     option = {
@@ -64,24 +29,32 @@ class Test_Webrick < Test::Unit::TestCase
   end
 
   def test_client_server
-    # NOTE: I don't enable SSL testing as this hangs
-    use_ssl = false
-    option = setup_http_server_option(use_ssl)
-    with_server(option, method(:create_servlet)) do |addr|
-      @s = XMLRPC::Client.new3(:host => addr.ip_address, :port => addr.ip_port, :use_ssl => use_ssl)
-      @s.user = 'admin'
-      @s.password = 'admin'
-      silent do
-        do_test
+    omit("The CGI file does not work on Windows") if Gem.win_platform?
+
+    Tempfile.create("cgi-bin") do |tempfile|
+      tempfile.write(cgi_bin_script)
+      tempfile.close
+      File.chmod(0755, tempfile.path)
+
+      # NOTE: I don't enable SSL testing as this hangs
+      use_ssl = false
+      option = setup_http_server_option(use_ssl)
+      with_server(option, WEBrick::HTTPServlet::CGIHandler, tempfile.path) do |addr|
+        @s = XMLRPC::Client.new3(:host => addr.ip_address, :port => addr.ip_port, :use_ssl => use_ssl)
+        @s.user = 'admin'
+        @s.password = 'admin'
+        silent do
+          do_test
+        end
+        @s.http.finish
+        @s = XMLRPC::Client.new3(:host => addr.ip_address, :port => addr.ip_port, :use_ssl => use_ssl)
+        @s.user = '01234567890123456789012345678901234567890123456789012345678901234567890123456789'
+        @s.password = 'guest'
+        silent do
+          do_test
+        end
+        @s.http.finish
       end
-      @s.http.finish
-      @s = XMLRPC::Client.new3(:host => addr.ip_address, :port => addr.ip_port, :use_ssl => use_ssl)
-      @s.user = '01234567890123456789012345678901234567890123456789012345678901234567890123456789'
-      @s.password = 'guest'
-      silent do
-        do_test
-      end
-      @s.http.finish
     end
   end
 
@@ -129,5 +102,39 @@ class Test_Webrick < Test::Unit::TestCase
 
     # multibyte characters
     assert_equal("あいうえおかきくけこ", @s.call('test.add', "あいうえお", "かきくけこ"))
+  end
+
+  def cgi_bin_script
+    <<~RUBY
+      #!#{Gem.ruby}
+      # frozen_string_literal: true
+
+      $LOAD_PATH << #{File.expand_path("../lib", __dir__).inspect}
+
+      require "xmlrpc/server"
+
+      s = XMLRPC::CGIServer.new
+
+      s.add_handler("test.add") do |a, b|
+        a + b
+      end
+
+      s.add_handler("test.div") do |a, b|
+        if b == 0
+          raise XMLRPC::FaultException.new(1, "division by zero")
+        else
+          a / b
+        end
+      end
+
+      s.set_default_handler do |name, *args|
+        raise XMLRPC::FaultException.new(-99, "Method \#{name} missing" +
+              " or wrong number of parameters!")
+      end
+
+      s.add_introspection
+
+      s.serve
+    RUBY
   end
 end
