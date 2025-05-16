@@ -8,7 +8,7 @@ require 'tempfile'
 require "xmlrpc/server"
 require 'xmlrpc/client'
 
-class Test_CGIServer < Test::Unit::TestCase
+class TestCGIServer < Test::Unit::TestCase
   include WEBrick_Testing
 
   def setup_http_server_option(use_ssl)
