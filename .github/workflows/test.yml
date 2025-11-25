@@ -33,7 +33,7 @@ jobs:
           - { os: macos   , ruby: "2.5" }
           - { os: windows , ruby: head }
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
