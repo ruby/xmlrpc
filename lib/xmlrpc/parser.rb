@@ -595,7 +595,7 @@ module XMLRPC # :nodoc:
 
     class LibXMLStreamParser < AbstractStreamParser
       def initialize
-        require 'libxml'
+        require 'libxml-ruby'
         @parser_class = LibXMLStreamListener
       end
 
