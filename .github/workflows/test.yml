@@ -17,7 +17,6 @@ jobs:
           - macos
           - windows
         ruby:
-          - "2.5"
           - "2.6"
           - "2.7"
           - "3.0"
@@ -30,7 +29,6 @@ jobs:
           - { os: windows , ruby: mingw }
           - { os: windows , ruby: mswin }
         exclude:
-          - { os: macos   , ruby: "2.5" }
           - { os: windows , ruby: head }
     steps:
       - uses: actions/checkout@v6
