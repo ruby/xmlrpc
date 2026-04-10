@@ -1,5 +1,36 @@
 # News
 
+## 0.3.4
+
+### Improvements
+
+  * GH-40: Added accessor methods to `XMLRPC::Config`.
+    * Patch by Herwin Weststrate
+
+  * Added REXML dependency.
+    * Patch by Herwin Weststrate
+
+  * GH-55: Added support for Nokogiri.
+    * Patch by Herwin Weststrate
+
+  * GH-56: Added support for Rack.
+    * Patch by Herwin Weststrate
+
+  * GH-59: Dropped support for mod_ruby.
+    * Patch by Herwin Weststrate
+
+  * GH-63: Added support for libxml_ruby 6.0.0 or later.
+    * Patch by Herwin Weststrate
+
+### Fixes
+
+  * GH-42 GH-43: Fixed a bug that IPv6 address host isn't used.
+    * Patch by Herwin Weststrate
+
+### Thanks
+
+  * Herwin Weststrate
+
 ## 0.3.3
 
 ### Improvements
