@@ -14,17 +14,7 @@ class ClientTest < Test::Unit::TestCase
 
   module Fake
     class HTTP < Net::HTTP
-      class << self
-        def new(*args, &block)
-          Class.method(:new).unbind.bind(self).call(*args, &block)
-        end
-      end
-
-      def initialize responses = {}
-        super("127.0.0.1")
-        @started = false
-        @responses = responses
-      end
+      attr_writer :responses
 
       def started?
         @started
@@ -57,7 +47,7 @@ class ClientTest < Test::Unit::TestCase
 
       private
       def net_http host, port, proxy_host, proxy_port
-        HTTP.new
+        HTTP.new("127.0.0.1")
       end
     end
 
@@ -353,7 +343,11 @@ class ClientTest < Test::Unit::TestCase
 
   def fake_client(responses, uri)
     client_class = Class.new(Fake::Client) {
-      define_method(:net_http) { |*_| Fake::HTTP.new(responses) }
+      define_method(:net_http) do |*_|
+        http = Fake::HTTP.new("127.0.0.1")
+        http.responses = responses
+        http
+      end
     }
     client = client_class.new2(uri)
     client.set_parser(parser)
