@@ -16,7 +16,7 @@ class ClientTest < Test::Unit::TestCase
     class HTTP < Net::HTTP
       class << self
         def new(*args, &block)
-          Class.method(:new).unbind.bind(self).call(*args, &block)
+          Object.method(:new).unbind.bind(self).call(*args, &block)
         end
       end
 
