@@ -1,5 +1,16 @@
 # News
 
+## 0.3.5
+
+### Improvements
+
+  * GH-70 GH-72: Added support for running tests with Ruby 4.1.
+    * Reported by Mamoru TASAKA
+
+### Thanks
+
+  * Mamoru TASAKA
+
 ## 0.3.4
 
 ### Improvements
